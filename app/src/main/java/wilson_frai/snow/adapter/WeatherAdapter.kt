@@ -9,7 +9,7 @@ import wilson_frai.domain.models.WeatherModel
 import wilson_frai.snow.R
 import kotlin.math.pow
 
-class WeatherAdapter() : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
+class WeatherAdapter(private val day: Int) : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
     class WeatherViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     private var weathers = mutableListOf<WeatherModel>()
@@ -21,9 +21,9 @@ class WeatherAdapter() : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>(
 
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
         holder.itemView.item_weather_hour.text = (3 * position).toString()
-        holder.itemView.item_weather_temperature.text = weathers[position].temperature.toString()
+        holder.itemView.item_weather_temperature.text = weathers[position * day].temperature.toString()
 
-        when (weathers[position].weather) {
+        when (weathers[position * day].weather) {
             "Thunderstorm" -> holder.itemView.item_weather_image.setImageResource(R.drawable.img_thunderstorm)
             "Rain" -> holder.itemView.item_weather_image.setImageResource(R.drawable.img_rain)
             "Drizzle" -> holder.itemView.item_weather_image.setImageResource(R.drawable.img_rain)

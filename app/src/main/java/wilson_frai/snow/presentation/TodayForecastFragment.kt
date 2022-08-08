@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.dialog_fragment_find_city.*
 import wilson_frai.domain.models.WeatherModel
 import wilson_frai.snow.R
 import wilson_frai.snow.adapter.WeatherAdapter
@@ -33,7 +34,7 @@ class TodayForecastFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[TodayForecastViewModel::class.java]
         val weathers = viewModel.weathersLiveData
-        val adapter = WeatherAdapter()
+        val adapter = WeatherAdapter(day = 1)
 
         initPopupMenu(this.context)
         binding.todayForecastRecyclerView.adapter = adapter
@@ -45,6 +46,16 @@ class TodayForecastFragment : Fragment() {
             binding.todayForecastTemperature.text = weathers[0].temperature.toString()
             binding.todayForecastWeather.text = weathers[0].weather.toString()
         }
+
+        // Для получение погоды при возвращение на фрагмент
+        viewModel.cityLiveData.observe(viewLifecycleOwner) { city ->
+            viewModel.getWeather(city)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getCity()
     }
 
     // ----
@@ -74,6 +85,7 @@ class TodayForecastFragment : Fragment() {
             popupMenu.show()
         }
 
+        // Получение погоды при указания погоды.
         childFragmentManager.setFragmentResultListener(FindCityDialogFragment.REQUEST_KEY, viewLifecycleOwner) {
             _, bundle ->
             val city = bundle.getString(FindCityDialogFragment.KEY_RESPONSE).toString()

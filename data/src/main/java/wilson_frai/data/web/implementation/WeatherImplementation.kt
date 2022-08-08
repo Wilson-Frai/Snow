@@ -5,9 +5,9 @@ import wilson_frai.data.web.retrofit.RetrofitClient
 import wilson_frai.domain.models.WeatherModel
 import wilson_frai.domain.repositories.WeatherRepository
 
-class Implementation() : WeatherRepository {
+class WeatherImplementation() : WeatherRepository {
     // TODO - Удалить ключ перед публикацией.
-    private val API_KEY = "94af117bd5336cfc1ff9fa18116a1df7"
+    private val API_KEY = ""
     private val apiService = RetrofitClient().getApiService()
 
     override fun getTodayWeatherForecast(city: String): List<WeatherModel> {
