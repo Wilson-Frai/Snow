@@ -33,7 +33,7 @@ class Implementation() : WeatherRepository {
     private fun convertToWeatherModelList(jsonModel: WeatherForecastJsonModel): List<WeatherModel> {
         val result = mutableListOf<WeatherModel>()
 
-        for (index in 0..8) {
+        for (index in 0..39) {
             result.add(index, WeatherModel(
                 city = jsonModel.city?.name,
                 weather = jsonModel.list?.get(index)?.weathers?.get(0)?.status,
