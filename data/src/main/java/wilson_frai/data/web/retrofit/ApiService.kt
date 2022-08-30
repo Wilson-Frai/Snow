@@ -1,11 +1,10 @@
 package wilson_frai.data.web.retrofit
 
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
-import wilson_frai.data.web.jsonmodel.WeatherForecastJsonModel
-
+import wilson_frai.data.web.jsonmodels.WeatherForecastJsonModel
 
 
 interface ApiService {
@@ -13,7 +12,8 @@ interface ApiService {
     @GET("data/2.5/forecast?units=metric")
     fun getHourlyWeatherForecast(
         @Query("q") city: String,
-        @Query("appid") key: String
+        @Query("appid") key: String,
+        @Query("lang") lang: String = "ru"
     ) : Call<WeatherForecastJsonModel>
 
     // Запрос по координатам

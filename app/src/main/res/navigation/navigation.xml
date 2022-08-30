@@ -6,13 +6,36 @@
     app:startDestination="@id/todayForecastFragment">
 
     <fragment
+        android:id="@+id/futureForecastFragment"
+        android:name="wilson_frai.snow.presentation.FutureForecastFragment"
+        android:label="fragment_future_forecast"
+        tools:layout="@layout/fragment_future_forecast" >
+        <action
+            android:id="@+id/action_futureForecastFragment_to_todayForecastFragment"
+            app:destination="@id/todayForecastFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/todayForecastFragment"
         android:name="wilson_frai.snow.presentation.TodayForecastFragment"
         android:label="fragment_today_forecast"
-        tools:layout="@layout/fragment_today_forecast" />
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="wilson_frai.snow.presentation.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/activity_main" />
+        tools:layout="@layout/fragment_today_forecast" >
+        <action
+            android:id="@+id/action_todayForecastFragment_to_findCityDialogFragment"
+            app:destination="@id/findCityDialogFragment" />
+        <action
+            android:id="@+id/action_todayForecastFragment_to_futureForecastFragment"
+            app:destination="@id/futureForecastFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/findCityDialogFragment"
+        android:name="wilson_frai.snow.presentation.FindCityDialogFragment"
+        android:label="FindCityDialogFragment" >
+        <action
+            android:id="@+id/action_findCityDialogFragment_to_todayForecastFragment"
+            app:destination="@id/todayForecastFragment">
+        </action>
+    </dialog>
+
 </navigation>

@@ -1,28 +1,28 @@
 package wilson_frai.data.web.retrofit
 
+import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 
-class RetrofitClient {
+
+object RetrofitInstance {
     private val URL = "https://api.openweathermap.org"
     private val httpLoggingInterceptor = HttpLoggingInterceptor()
-
-    private fun getRetrofitInstance(): Retrofit {
-        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor)
-            .build()
-
-        return Retrofit.Builder()
-            .baseUrl(URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    init {
+        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
     }
 
-    public fun getApiService(): ApiService {
-        return getRetrofitInstance().create(ApiService::class.java)
-    }
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(httpLoggingInterceptor)
+        .build()
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(URL)
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create())
+        .build()
+
+    val apiService = retrofit.create(ApiService::class.java)
 }

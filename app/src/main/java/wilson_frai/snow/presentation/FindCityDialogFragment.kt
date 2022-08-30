@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import wilson_frai.snow.databinding.DialogFragmentFindCityBinding
 
+
 class FindCityDialogFragment : DialogFragment() {
+    //private val viewModel: ForecastViewModel by viewModel<ForecastViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = DialogFragmentFindCityBinding.inflate(layoutInflater)
@@ -21,6 +24,7 @@ class FindCityDialogFragment : DialogFragment() {
             val city = binding.dialogFindCityCityEditText.text.toString()
             if (city != "" && city.length > 2) {
                 parentFragmentManager.setFragmentResult(REQUEST_KEY, bundleOf(KEY_RESPONSE to city))
+                //viewModel.saveCity(city)
                 dismiss()
             } else {
                 Toast.makeText(this.context, "Please, enter city name.", Toast.LENGTH_SHORT).show()

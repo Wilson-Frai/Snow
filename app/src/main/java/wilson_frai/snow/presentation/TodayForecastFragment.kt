@@ -8,19 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.dialog_fragment_find_city.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import wilson_frai.domain.models.WeatherModel
 import wilson_frai.snow.R
-import wilson_frai.snow.adapter.WeatherAdapter
+import wilson_frai.snow.presentation.adapters.WeatherAdapter
 import wilson_frai.snow.databinding.FragmentTodayForecastBinding
+
 
 class TodayForecastFragment : Fragment() {
     private lateinit var binding: FragmentTodayForecastBinding
-    private lateinit var viewModel: TodayForecastViewModel
+    private val viewModel by viewModel<ForecastViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,30 +29,30 @@ class TodayForecastFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[TodayForecastViewModel::class.java]
-        val weathers = viewModel.weathersLiveData
-        val adapter = WeatherAdapter(day = 1)
-
         initPopupMenu(this.context)
+
+        val adapter = WeatherAdapter()
         binding.todayForecastRecyclerView.adapter = adapter
 
-        weathers.observe(viewLifecycleOwner) { weathers ->
-            // TODO - Отображение той части, что идёт после текущего времени на устройстве.
-            adapter.setData(weathers)
-            binding.todayForecastRecyclerView.adapter?.notifyDataSetChanged()
-            binding.todayForecastTemperature.text = weathers[0].temperature.toString()
-            binding.todayForecastWeather.text = weathers[0].weather.toString()
+        viewModel.weathersLiveData.observe(viewLifecycleOwner) { weathers ->
+            if (weathers.isNotEmpty()) {
+                adapter.weathers = weathers.subList(0, 7)
+                val temperature = "${weathers[viewModel.hour/3].temperature.toString()}°"
+                binding.todayForecastTemperature.text = temperature
+                binding.todayForecastWeather.text = weathers[viewModel.hour/3].description
+            } else {
+                binding.todayForecastWeather.text = "Нет интернета или город не был найден."
+            }
         }
 
-        // Для получение погоды при возвращение на фрагмент
-        viewModel.cityLiveData.observe(viewLifecycleOwner) { city ->
-            viewModel.getWeather(city)
+        viewModel.cityLiveData.observe(viewLifecycleOwner) {
+            viewModel.getWeather(it)
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.getCity()
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateWeather()
     }
 
     // ----
@@ -71,7 +68,7 @@ class TodayForecastFragment : Fragment() {
                     true
                 }
                 R.id.popup_show_more_info -> {
-                    // TODO - сделать DialogFragment с подробной информацией.
+                    // TODO - сделать DialogFragment с подробной информацией погоды на текущий момент.
                     true
                 }
                 else -> {
@@ -85,12 +82,10 @@ class TodayForecastFragment : Fragment() {
             popupMenu.show()
         }
 
-        // Получение погоды при указания погоды.
         childFragmentManager.setFragmentResultListener(FindCityDialogFragment.REQUEST_KEY, viewLifecycleOwner) {
             _, bundle ->
             val city = bundle.getString(FindCityDialogFragment.KEY_RESPONSE).toString()
             viewModel.saveCity(city)
-            viewModel.getWeather(city)
         }
     }
 }
